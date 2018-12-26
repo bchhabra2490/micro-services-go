@@ -48,22 +48,22 @@ func (s *service) FindAvailable(ctx context.Context, req *pb.Specification, res 
 
 func main() {
 	vessels := []*pb.Vessel{
-		&pb.Vessel{Id: "vessel001", Name: "Boaty McBoatface", MaxWeight: 200000, Capacity: 500}
+		&pb.Vessel{Id: "vessel001", Name: "Boaty McBoatface", MaxWeight: 200000, Capacity: 500},
 	}
 
 	repo := &VesselRepository{vessels}
 
 	srv := micro.NewService(
-			micro.Name("go.micro.srv.vessel"),
-			micro.Version("latest"),
-		)
+		micro.Name("go.micro.srv.vessel"),
+		micro.Version("latest"),
+	)
 
 	srv.Init()
 
 	// Register our implementation with
 	pb.RegisterVesselServiceHandler(srv.Server(), &service{repo})
 
-	if err := srv.Run(); err != nil{
+	if err := srv.Run(); err != nil {
 		fmt.Println(err)
 	}
 }

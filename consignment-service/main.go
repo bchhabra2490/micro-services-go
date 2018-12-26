@@ -32,7 +32,7 @@ func (repo *ConsignmentRepository) GetAll() []*pb.Consignment {
 
 type service struct {
 	repo         Repository
-	vesselClient vesselProto.VesselServiceClient
+	vesselClient vesselProto.VesselService
 }
 
 func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
@@ -75,6 +75,8 @@ func main() {
 		micro.Name("go.micro.srv.consignment"),
 		micro.Version("latest"),
 	)
+
+	vesselClient := vesselProto.NewVesselService("go.micro.srv.vessel", srv.Client())
 
 	// Init will parse the command line flags
 	srv.Init()

@@ -27,7 +27,7 @@ func parseFile(file string) (*pb.Consignment, error) {
 	}
 
 	json.Unmarshal(data, &consignment)
-	return consignment, err
+	return consignment, nil
 }
 
 func main() {
