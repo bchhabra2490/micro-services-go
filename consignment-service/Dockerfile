@@ -28,6 +28,6 @@ RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /go/src/services/consignment-service .
+COPY --from=builder /go/src/services/consignment-service/consignment-service .
 
 CMD ["./consignment-service"]
