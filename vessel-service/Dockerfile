@@ -9,7 +9,7 @@ RUN go get -u github.com/golang/dep/cmd/dep
 RUN rm -rf vendor
 RUN dep init && dep ensure
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo main.go handler.go repository.go
 # Start a new build
 
 FROM debian:latest
