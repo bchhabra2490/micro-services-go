@@ -17,7 +17,7 @@ RUN dep init && dep ensure
 # Build the binary, with a few flags which will allow
 # us to run this binary in Alpine. 
 
-RUN GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo .
 
 # Start a new build process
 

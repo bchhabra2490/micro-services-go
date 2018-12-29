@@ -4,70 +4,33 @@ package main
 
 import (
 	"fmt"
-	micro "github.com/micro/go-micro"
 	"golang.org/x/net/context"
 	"log"
+	"os"
 	pb "services/consignment-service/proto/consignment"
 	vesselProto "services/vessel-service/proto/vessel"
 )
 
-type Repository interface {
-	Create(*pb.Consignment) (*pb.Consignment, error)
-	GetAll() []*pb.Consignment
-}
-
-type ConsignmentRepository struct {
-	consignments []*pb.Consignment
-}
-
-func (repo *ConsignmentRepository) Create(consignment *pb.Consignment) (*pb.Consignment, error) {
-	updated := append(repo.consignments, consignment)
-	repo.consignments = updated
-	return consignment, nil
-}
-
-func (repo *ConsignmentRepository) GetAll() []*pb.Consignment {
-	return repo.consignments
-}
-
-type service struct {
-	repo         Repository
-	vesselClient vesselProto.VesselService
-}
-
-func (s *service) CreateConsignment(ctx context.Context, req *pb.Consignment, res *pb.Response) error {
-
-	vesselResponse, err := s.vesselClient.FindAvailable(context.Background(), &vesselProto.Specification{
-		MaxWeight: req.Weight,
-		Capacity:  int32(len(req.Containers)),
-	})
-	log.Printf("Found vessel: %s \n", vesselResponse.Vessel.Name)
-
-	if err != nil {
-		return err
-	}
-
-	req.VesselId = vesselResponse.Vessel.Id
-
-	// Save out consignment
-	consignment, err := s.repo.Create(req)
-	if err != nil {
-		return err
-	}
-	res.Created = true
-	res.Consignment = consignment
-
-	return nil
-}
-
-func (s *service) GetConsignments(ctx context.Context, req *pb.GetRequest, res *pb.Response) error {
-	consignments := s.repo.GetAll()
-	res.Consignments = consignments
-	return nil
-}
+const (
+	defaultHost = "localhost:27017"
+)
 
 func main() {
-	repo := &ConsignmentRepository{}
+
+	// Database host from the environment variables
+	host := os.Getenv("DB_HOST")
+
+	if host == "" {
+		host = defaultHost
+	}
+
+	session, err := CreateSession(host)
+
+	defer session.Close()
+
+	if err != nil {
+		log.Panicf("Could not connect to datastore with host %s - %v", host, err)
+	}
 
 	// Create a new service.
 	srv := micro.NewService(
@@ -82,7 +45,7 @@ func main() {
 	srv.Init()
 
 	// Register handler
-	pb.RegisterShippingServiceHandler(srv.Server(), &service{repo, vesselClient})
+	pb.RegisterShippingServiceHandler(srv.Server(), &service{session, vesselClient})
 
 	if err := srv.Run(); err != nil {
 		fmt.Println(err)
