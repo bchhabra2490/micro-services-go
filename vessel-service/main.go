@@ -7,8 +7,8 @@ import (
 	"errors"
 	"fmt"
 
+	pb "github.com/EwanValentine/shippy/vessel-service/proto/vessel"
 	"github.com/micro/go-micro"
-	pb "services/vessel-service/proto/vessel"
 )
 
 type Repository interface {

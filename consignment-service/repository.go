@@ -3,8 +3,8 @@
 package main
 
 import (
+	pb "github.com/bchhabra2490/micro-services-go/consignment-service/proto/consignment"
 	"gopkg.in/mgo.v2"
-	pb "services/consignment-service/proto/consignment"
 )
 
 const (

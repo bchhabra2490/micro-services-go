@@ -4,11 +4,11 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
+	pb "github.com/bchhabra2490/micro-services-go/consignment-service/proto/consignment"
+	vesselProto "github.com/bchhabra2490/micro-services-go/vessel-service/proto/vessel"
+	"github.com/micro/go-micro"
 	"log"
 	"os"
-	pb "services/consignment-service/proto/consignment"
-	vesselProto "services/vessel-service/proto/vessel"
 )
 
 const (
